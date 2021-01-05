@@ -164,7 +164,7 @@ if __name__ == '__main__':
     # alu1 = ['RS1', 'ADD', 'R3', 1, 2]  #  運算add,sub
     # alu2 = []  #  運算mul,div
     issue_pointer = 0
-    while Cycle < 65:
+    while Cycle > 0:
         print('--------------------')
         print('Cycle: ', Cycle)
         print()
@@ -193,6 +193,7 @@ if __name__ == '__main__':
                         pass
         Cycle += 1
         issue_pointer = issue_pointer2
+        done_check = False
         print("ARF: ",ARF)
         print("RAT: ",RAT)
         print("RS: ",rs)
@@ -200,8 +201,9 @@ if __name__ == '__main__':
 
         print("State Table: ")
         print('{:>7}'.format('I'), end = '')
-        print('{:>5}'.format('W'), end = '')
-        print('{:>5}'.format('E'))
+        print('{:>5}'.format('E'), end = '')
+        print('{:>5}'.format('W'))
+        c = 0
         for st_i in range(len(ST)):
             try:
                 print('{:>2}'.format(st_i+1), end = '')
@@ -213,7 +215,22 @@ if __name__ == '__main__':
             try:
                 print('{:>5}'.format(ST[st_i][2]))
             except IndexError:
-                print('{:>5}'.format(''))
+                print('{:>5}'.format(''))     
+
+            '''
+            -----確認有沒有完成-----
+            '''       
+            if len(ST[st_i]) == 3:
+                c += 1
+            if c == len(ST):
+                done_check = True
+
         print('')
+        print('已完成: ',c)
+        print('共: ',len(ST))
+        if done_check == True:
+            break
+        
+        
         
 
