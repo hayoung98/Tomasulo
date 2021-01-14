@@ -1,15 +1,20 @@
 import pandas as pd
 import numpy as np
+import copy
 
 ARF = [-23,16,45,5,3,4,1,2]
 RAT = [0,0,0,0,0,0,0,0]
 Cycle = 1
-add_cycle = 1
+add_cycle = 2
 sub_cycle = 1
 mul_cucle = 10
 div_cycle = 40
 ALU_empty_check = [True, True]
 alu_done_cycle = 0
+ARF2 = []
+RAT2 = []
+rs2 = []
+ST2 = []
 
 def StateTable(l):
     ST = []
@@ -123,6 +128,7 @@ def Write_Back(r, ip, ST, Cycle):
         answer = compute(r)
         # print("answer: ",answer)
         ST[ip].append(Cycle)
+
         # print("now r: ",r)
 
         '''
@@ -152,17 +158,18 @@ def Write_Back(r, ip, ST, Cycle):
             if clean == r:
                 for i in range(5):
                     clean.pop()
-        
-
 
 
 if __name__ == '__main__':
     inst_table = pd.read_table('input.txt',header=None,sep=",")
     print(inst_table)
-    ST = StateTable(len(inst_table))
+    ST = StateTable(len(inst_table)).copy()
     rs = RS(5)
     # alu1 = ['RS1', 'ADD', 'R3', 1, 2]  #  運算add,sub
     # alu2 = []  #  運算mul,div
+
+    
+
     issue_pointer = 0
     while Cycle > 0:
         print('--------------------')
@@ -194,42 +201,50 @@ if __name__ == '__main__':
         Cycle += 1
         issue_pointer = issue_pointer2
         done_check = False
-        print("ARF: ",ARF)
-        print("RAT: ",RAT)
-        print("RS: ",rs)
-        print("issue pointer: ",issue_pointer)
 
-        print("State Table: ")
-        print('{:>7}'.format('I'), end = '')
-        print('{:>5}'.format('E'), end = '')
-        print('{:>5}'.format('W'))
-        c = 0
-        for st_i in range(len(ST)):
-            try:
-                print('{:>2}'.format(st_i+1), end = '')
-                print('{:>5}'.format(ST[st_i][0]), end = '')
-                print('{:>5}'.format(ST[st_i][1]), end = '')                
-            except IndexError:
-                print('{:>5}'.format(''), end = '')
-    
-            try:
-                print('{:>5}'.format(ST[st_i][2]))
-            except IndexError:
-                print('{:>5}'.format(''))     
+        if (ARF2 != ARF) or (RAT2 != RAT) or (rs2 != rs) or (ST2 != ST):
+            print("ARF: ",ARF)
+            print("RAT: ",RAT)
+            print("RS: ",rs)
+            print("issue pointer: ",issue_pointer)
 
-            '''
-            -----確認有沒有完成-----
-            '''       
-            if len(ST[st_i]) == 3:
-                c += 1
-            if c == len(ST):
-                done_check = True
+            print("State Table: ")
+            print('{:>7}'.format('I'), end = '')
+            print('{:>5}'.format('E'), end = '')
+            print('{:>5}'.format('W'))
+            c = 0
+            for st_i in range(len(ST)):
+                try:
+                    print('{:>2}'.format(st_i+1), end = '')
+                    print('{:>5}'.format(ST[st_i][0]), end = '')
+                    print('{:>5}'.format(ST[st_i][1]), end = '')                
+                except IndexError:
+                    print('{:>5}'.format(''), end = '')
+        
+                try:
+                    print('{:>5}'.format(ST[st_i][2]))
+                except IndexError:
+                    print('{:>5}'.format(''))     
 
-        print('')
-        print('已完成: ',c)
-        print('共: ',len(ST))
-        if done_check == True:
-            break
+                '''
+                -----確認有沒有完成-----
+                '''       
+                if len(ST[st_i]) == 3:
+                    c += 1
+                if c == len(ST):
+                    done_check = True
+
+            print('')
+            print('已完成: ',c)
+            print('共: ',len(ST))
+            
+            ARF2 = copy.deepcopy(ARF)
+            RAT2 = copy.deepcopy(RAT)
+            rs2 = copy.deepcopy(rs)
+            ST2 = copy.deepcopy(ST)           
+
+            if done_check == True:
+                break
         
         
         
